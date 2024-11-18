@@ -1,0 +1,1071 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><script src="Systems%20Software%20and%20Networking%20I_files/fido2-page-script.js"></script><head>
+    <link rel="shortcut icon" href="https://courses.umass.edu/eceng322-deirwin/fall24/assignments/umass.jpg">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <title>Systems Software and Networking I</title>
+    <meta content="David Irwin" name="author">
+    <meta content="Course Webpage" name="description">
+  </head>
+  <body vlink="#551A8B" text="#000000" link="#0000EE" bgcolor="#FFFFFF" alink="#EE0000">
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" bgcolor="#ffffff">
+      <tbody>
+        <tr>
+          <td valign="top" bgcolor="#ffffff"><big><big><b>ECE 322 -
+                  Systems Programming<br>
+                  <a href="http://www.umass.edu/"><font color="#990000"><small>University
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        of Massachusetts Amherst</small></font></a><br>
+                  <a href="http://engineering.umass.edu/"><font color="#990000"><small>The College of Engineering</small></font>
+                  </a><br>
+                  <a href="http://www.ece.umass.edu/"><font color="#990000"><small>Department of Electrical
+                        and Computer Engineering</small></font></a></b></big></big></td>
+          <td valign="top" align="left"><a href="http://www.umass.edu/"><img alt="UMass Amherst Logo" src="Systems%20Software%20and%20Networking%20I_files/umass-logo.jpg" width="129" height="100" border="0"></a><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <big><big><b> </b></big></big>
+    <table width="801" height="33" cellspacing="2" cellpadding="2" border="2" bgcolor="#ffffff" align="center">
+      <tbody>
+        <tr>
+          <td valign="top" bgcolor="#ffffff" align="center"><a href="https://courses.umass.edu/eceng322-deirwin/fall24/index.html"><b>Home</b></a><br>
+          </td>
+          <td valign="top" align="center"><a href="https://courses.umass.edu/eceng322-deirwin/fall24/calendar.html"><b>Calendar</b></a>
+          </td>
+          <td valign="top" align="center"><a href="https://courses.umass.edu/eceng322-deirwin/fall24/staff.html"><b>Staff</b></a>
+          </td>
+          <td valign="top" align="center"><a href="https://courses.umass.edu/eceng322-deirwin/fall24/assignments.html"><b>Assignments</b></a></td>
+          <td valign="top" align="center"><a href="https://courses.umass.edu/eceng322-deirwin/fall24/resources.html"><b>Resources</b></a></td>
+          <td valign="top" align="center"><a moz-do-not-send="true" href="https://courses.umass.edu/eceng322-deirwin/fall24/resources/feedback.html"><b>Feedback</b></a></td>
+        </tr>
+      </tbody>
+    </table>
+    <big><big><b><br>
+        </b></big></big><big><big><b>Assignment 4</b></big></big><span style="color: rgb(0, 0, 0); font-family: Times; font-size: medium;
+      font-style: normal; font-variant: normal; font-weight: normal;
+      letter-spacing: normal; line-height: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px;
+      display: inline !important; float: none; "><span style="color:
+        rgb(0, 0, 0); font-family: Times; font-size: medium; font-style:
+        normal; font-variant: normal; font-weight: normal;
+        letter-spacing: normal; line-height: normal; orphans: 2;
+        text-align: start; text-indent: 0px; text-transform: none;
+        white-space: normal; widows: 2; word-spacing: 0px;
+        -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px;
+        display: inline !important; float: none; "></span></span> <br>
+    <b><br>
+    </b> <b style="color: rgb(0, 0, 0); font-family: Times; font-size:
+      medium; font-style: normal; font-variant-ligatures: normal;
+      font-variant-caps: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">You may work with a partner on
+      this assignment. However, everyone must submit their own code to
+      Moodle.&nbsp; Working with a partner is voluntary and simply means
+      that you can submit the same code and it will not count as a
+      violation of the UMass Academic Honesty Policy.&nbsp; Note that we
+      will check submissions for plagiarism using an automated code
+      plagiarism detector.</b><br>
+    <b><br>
+    </b>Download the file for the assignment <a href="https://courses.umass.edu/eceng322-deirwin/fall24/assignments/assignment4.tar.gz">here</a>.&nbsp; As with the previous
+    assignments, all work should be completed on the class VM.&nbsp; To
+    download the assignment tar.gz file from the terminal in the class
+    VM and untar it, run the following commands.<br>
+    <br>
+    $ wget --user irwin-ece --password myclass
+    --no-check-certificate
+https://courses.umass.edu/eceng322-deirwin/fall24/assignments/assignment4.tar.gz<br>
+    $ tar xzvf assignment4.tar.gz<br>
+    <br>
+    The commands above will create an assignment4/ directory, which has
+    the assignment files. <br>
+    <br>
+    In this assignment, you will be writing a dynamic storage allocator
+    for C programs, i.e., your own version of the malloc and free
+    routines. This is a classic implementation problem with many
+    interesting algorithms and opportunities to put several of the
+    skills you have learned in this course to good use. It is quite
+    involved. Start early! <br>
+    <br>
+    <b>Learning Objectives</b><font size="+1"><b><br>
+        <br>
+      </b></font>- Implement a memory allocator using an explicit free
+    list.<br>
+    - Examine how algorithm choice impacts tradeoffs between utilization
+    and throughput.<br>
+    - Read and modify a substantial C program.<br>
+    - Improve your C programming skills including gaining more
+    experience with structs, pointers, macros, and debugging.<br>
+    <br>
+    <b>Optional Practice Problems</b><br>
+    <br>
+    Here are some extra practice problems for memory allocation in case
+    you find them helpful in preparing for the assignment. You do not
+    need to submit these, they are just good practice. Read section 9.9
+    from the textbook for review. (Note �word� means 4 bytes for these
+    problems.)<br>
+    <br>
+    1. Practice Problem 9.6, p. 849<br>
+    2. Practice Problem 9.7, p. 852<br>
+    3. Practice Problem 9.10, p. 864<br>
+    4. Homework Problem 9.15, p. 879<br>
+    5. Homework Problem 9.16, p. 879<br>
+    <br>
+    <font size="+2"><b>Instructions</b></font><br>
+    <br>
+    Start by extracting<span> </span><code>assignment4.tar.gz</code><span></span>,
+    as discussed above.<code> </code>This will cause a number of files
+    to be unpacked in a directory called assignment4/. The only file you
+    will modify and turn in is<span>&nbsp;</span><code>mm.c</code>. You
+    may find the short<span>&nbsp;</span><code>README</code><span>&nbsp;</span>file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    useful to read.<br>
+    <br>
+    Your dynamic storage allocator will consist of the following three
+    functions (and several helper functions), which are declared in<span>&nbsp;</span><code>mm.h</code><span>&nbsp;</span>and
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    defined in<span>&nbsp;</span><code>mm.c</code>:
+    <pre style="color: rgb(0, 0, 0); font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;"><code>int   mm_init(void);
+void* mm_malloc(size_t size);
+void  mm_free(void* ptr);</code><br></pre>
+    The<span>&nbsp;</span><code>mm.c</code><span>&nbsp;</span>file I
+    have given you partially implements an allocator using an explicit
+    free list. Your job is to complete this implementation by filling
+    out<span>&nbsp;</span><code>mm_malloc</code><span>&nbsp;</span>and<span>&nbsp;</span><code>mm_free</code>.
+    The three main memory management functions should work as follows:
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li><code>mm_init</code><span>&nbsp;</span>(provided): Before
+        calling<span>&nbsp;</span><code>mm_malloc</code><span>&nbsp;</span>or<span>&nbsp;</span><code>mm_free</code>,
+        the application program (i.e., the trace-driven driver program
+        that you will use to evaluate your implementation) calls<span>&nbsp;</span><code>mm_init</code><span>&nbsp;</span>to
+
+
+
+
+        perform any necessary initializations, such as allocating the
+        initial heap area. The return value is -1 if there was a problem
+        in performing the initialization, 0 otherwise.</li>
+      <li><code>mm_malloc</code>: The<span>&nbsp;</span><code>mm_malloc</code><span>&nbsp;</span>routine
+
+
+
+
+        returns a pointer to an allocated block payload of at least<span>&nbsp;</span><code>size</code><span>&nbsp;</span>bytes.
+
+
+
+
+        (<code>size_t</code><span>&nbsp;</span>is a type for describing
+        sizes; it's an unsigned integer that can represent a size
+        spanning all of memory, so on IA32 it is a 32-bit unsigned
+        value.) The entire allocated block should lie within the heap
+        region and should not overlap with any other allocated block.</li>
+      <li><code>mm_free</code>: The<span>&nbsp;</span><code>mm_free</code><span>&nbsp;</span>routine
+
+
+
+
+        frees the block pointed to by<span>&nbsp;</span><code>ptr</code>.
+        It returns nothing. This routine is guaranteed to work only when
+        the passed pointer (<code>ptr</code>) was returned by an earlier
+        call to<span>&nbsp;</span><code>mm_malloc</code><span>&nbsp;</span>and
+
+
+
+
+        has not yet been freed. These semantics match the the semantics
+        of the corresponding malloc and free routines in libc. Type<span>&nbsp;</span><code>man
+
+
+
+
+          malloc</code><span>&nbsp;</span>in the shell for complete
+        documentation.</li>
+    </ul>
+    <br>
+    Your malloc implementation should always return 8-byte aligned
+    pointers.&nbsp; <br>
+    <br>
+    <font size="+2"><b>Provided Code</b></font><br>
+    <br>
+    I define a<span>&nbsp;</span><code>BlockInfo</code><span>&nbsp;</span>struct
+
+
+
+
+    designed to be used as a node in a doubly-linked explicit free list,
+    and the following functions for manipulating free lists:
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li><code>BlockInfo* searchFreeList(int reqSize)</code>: returns a
+        block of at least the requested size if one exists (and<span>&nbsp;</span><code>NULL</code>otherwise)</li>
+      <li><code>void insertFreeBlock(BlockInfo* blockInfo)</code>:
+        inserts the given block in the free list in LIFO manner</li>
+      <li><code>void removeFreeBlock(BlockInfo* blockInfo)</code>:
+        removes the given block from the free list</li>
+    </ul>
+    <br>
+    In addition, I implement<span>&nbsp;</span><code>mm_init</code><span>&nbsp;</span>and
+
+
+
+
+    provide two helper functions implementing important parts of the
+    allocator:
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li><code>void requestMoreSpace(int incr)</code>: enlarges the
+        heap by<span>&nbsp;</span><code>incr</code><span>&nbsp;</span>bytes
+
+
+
+
+        (if enough memory is available on the machine to do so)</li>
+      <li><code>void coalesceFreeBlock(BlockInfo* oldBlock)</code>:
+        coalesces any other free blocks adjacent in memory to<span>&nbsp;</span><code>oldBlock</code>into
+
+
+
+
+        a single new large block and updates the free list accordingly</li>
+    </ul>
+    <br>
+    Finally, I use a number of C Preprocessor macros to extract common
+    pieces of code (constants, annoying casts/pointer manipulation) that
+    might be prone to error. Each is documented in the code. You are
+    welcome to create your own pre-processor macros as well, though the
+    ones already included in<span>&nbsp;</span><code>mm.c</code><span>&nbsp;</span>are
+
+
+
+
+    the only ones I used in my sample solution, so it's possible without
+    more. For more info on macros, check the<span>&nbsp;</span><a href="http://gcc.gnu.org/onlinedocs/cpp/Macros.html">GCC manual</a>.
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li><code>FREE_LIST_HEAD</code>: returns a pointer to the first
+        block in the free list (the head of the free list)</li>
+      <li><code>UNSCALED_POINTER_ADD</code><span>&nbsp;</span>and<span>&nbsp;</span><code>UNSCALED_POINTER_SUB</code>:
+        useful for doing pointer arithmetic without worrying about the
+        size of<span>&nbsp;</span><code>struct BlockInfo</code></li>
+      <li>Other short utilities for extracting the size field and
+        determining block size</li>
+    </ul>
+    <br>
+    Additionally, for debugging purposes, you may want to print the
+    contents of the heap. Here's code for a procedure to do so:
+    <pre style="color: rgb(0, 0, 0); font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;"><code>
+	/* Print the heap by iterating through it as an implicit free list. */
+	static void examine_heap() {
+	  BlockInfo *block;
+
+	  /* print to stderr so output isn't buffered and not output if we crash */
+	  fprintf(stderr, "FREE_LIST_HEAD: %p\n", (void *)FREE_LIST_HEAD);
+
+	  for (block = (BlockInfo *)UNSCALED_POINTER_ADD(mem_heap_lo(), WORD_SIZE); /* first block on heap */
+		  SIZE(block-&gt;sizeAndTags) != 0 &amp;&amp; block &lt; mem_heap_hi();
+		  block = (BlockInfo *)UNSCALED_POINTER_ADD(block, SIZE(block-&gt;sizeAndTags))) {
+
+		/* print out common block attributes */
+		fprintf(stderr, "%p: %ld %ld %ld\t",
+		(void *)block,
+		SIZE(block-&gt;sizeAndTags),
+		block-&gt;sizeAndTags &amp; TAG_PRECEDING_USED,
+		block-&gt;sizeAndTags &amp; TAG_USED);
+
+		/* and allocated/free specific data */
+		if (block-&gt;sizeAndTags &amp; TAG_USED) {
+		  fprintf(stderr, "ALLOCATED\n");
+		} else {
+		  fprintf(stderr, "FREE\tnext: %p, prev: %p\n",
+		  (void *)block-&gt;next,
+		  (void *)block-&gt;prev);
+		}
+	  }
+	  fprintf(stderr, "END OF HEAP\n\n");
+	}
+</code><br></pre>
+    <b>Memory System</b><br>
+    <br>
+    The<span>&nbsp;</span><code>memlib.c</code><span>&nbsp;</span>package
+
+
+
+
+    simulates the memory system for your dynamic memory allocator. In
+    your allocator, you can call the following functions (if you use the
+    provided code for an explicit free list, most uses of the memory
+    system calls are already covered).
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li><code>void* mem_sbrk(int incr)</code>: Expands the heap by<span>&nbsp;</span><code>incr</code><span>&nbsp;</span>bytes,
+
+
+
+
+        where<span>&nbsp;</span><code>incr</code><span>&nbsp;</span>is a
+        positive nonzero integer and returns a pointer to the first byte
+        of the newly allocated heap area. The semantics are identical to
+        the Unix<span>&nbsp;</span><code>sbrk</code><span>&nbsp;</span>function,
+
+
+
+
+        except that<span>&nbsp;</span><code>mem_sbrk</code><span>&nbsp;</span>accepts
+
+
+
+
+        only a positive nonzero integer argument. (Run<span>&nbsp;</span><code>man
+
+
+
+
+          sbrk</code><span>&nbsp;</span>if you want to learn more about
+        what this does in Unix.)</li>
+      <li><code>void* mem_heap_lo()</code>: Returns a pointer to the
+        first byte in the heap</li>
+      <li><code>void* mem_heap_hi()</code>: Returns a pointer to the
+        last byte in the heap.</li>
+      <li><code>size_t mem_heapsize()</code>: Returns the current size
+        of the heap in bytes.</li>
+      <li><code>size_t mem_pagesize()</code>: Returns the system's page
+        size in bytes (4K on Linux systems).</li>
+    </ul>
+    <b><br>
+      The Trace-driven Driver Program</b><br>
+    <br>
+    The driver program<span>&nbsp;</span><code>mdriver.c</code><span>&nbsp;</span>in
+
+
+
+
+    the<span> </span><code>assignment4.tar.gz</code><span>&nbsp;</span>distribution
+
+
+
+
+    tests your<span>&nbsp;</span><code>mm.c</code><span>&nbsp;</span>package
+
+
+
+
+    for correctness, space utilization, and throughput. Use the command<span>&nbsp;</span><code>make</code><span>&nbsp;</span>to
+
+
+
+
+    generate the driver code and run it with the command<span>&nbsp;</span><code>./mdriver&nbsp;-V</code><span>&nbsp;</span>(the<span>&nbsp;</span><code>-V</code>flag
+
+
+
+
+    displays helpful summary information as described below). The driver
+    program is controlled by a set of<span>&nbsp;</span><em>trace files</em><span>&nbsp;</span>that
+
+
+
+
+    it will expect to find in a subdirectory called<span>&nbsp;</span><code>traces</code>.
+    The tar file provided to you should unpack into a directory
+    structure that places the<span>&nbsp;</span><code>traces</code><span>&nbsp;</span>subdirectory
+
+
+
+
+    in the correct location relative to the driver. (If you want to move
+    the trace files around, you can update the TRACEDIR path in<span>&nbsp;</span><code>config.h</code>).
+
+
+
+
+    Each trace file contains a sequence of allocate and free directions
+    that instruct the driver to call your<span>&nbsp;</span><code>mm_malloc</code><span>&nbsp;</span>and<span>&nbsp;</span><code>mm_free</code><span>&nbsp;</span>routines
+
+
+
+
+    in some sequence. The driver and the trace files are the same ones I
+    will use when I grade your submitted<span>&nbsp;</span><code>mm.c</code><span>&nbsp;</span>file.<br>
+    <br>
+    The<span>&nbsp;</span><code>mdriver</code><span>&nbsp;</span>executable
+
+
+
+
+    accepts the following command line arguments:
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li><code>-t &lt;tracedir&gt;</code>: Look for the default trace
+        files in directory<span>&nbsp;</span><code>tracedir</code><span>&nbsp;</span>instead
+
+
+
+
+        of the default directory defined in<span>&nbsp;</span><code>config.h</code>.</li>
+      <li><code>-f &lt;tracefile&gt;</code>: Use one particular<span>&nbsp;</span><code>tracefile</code><span>&nbsp;</span>for
+
+
+
+
+        testing instead of the default set of tracefiles.</li>
+      <li><code>-h</code>: Print a summary of the command line
+        arguments.</li>
+      <li><code>-l</code>: Run and measure<span>&nbsp;</span><code>libc</code><span>&nbsp;</span>malloc
+
+
+
+
+        in addition to the student's malloc package.</li>
+      <li><code>-v</code>: Verbose output. Print a performance breakdown
+        for each tracefile in a compact table.</li>
+      <li><code>-V</code>: More verbose output. Prints additional
+        diagnostic information as each trace file is processed. Useful
+        during debugging for determining which trace file is causing
+        your malloc package to fail.</li>
+    </ul>
+    <br>
+    <font size="+2"><b>Programming Rules</b></font><br>
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li>You should not change any of the interfaces in<span>&nbsp;</span><code>mm.c</code><span>&nbsp;</span>(e.g.
+
+
+
+
+        names of functions, number and type of parameters, etc.).</li>
+      <li>You should not invoke any memory-management related library
+        calls or system calls. This means you cannot use<code> malloc</code>,<span>&nbsp;</span><code>calloc</code>,<span>&nbsp;</span><code>free</code>,<span>&nbsp;</span><code>realloc</code>,<span>&nbsp;</span><code>sbrk</code>,<span>&nbsp;</span><code>brk</code><span>&nbsp;</span>or
+
+
+
+
+        any variants of these calls in your code. (You may use all the
+        functions in<span>&nbsp;</span><code>memlib.c</code>, of
+        course.)</li>
+      <li>You are not allowed to define any global or<span>&nbsp;</span><code>static</code><span>&nbsp;</span>compound
+
+
+
+
+        data structures such as arrays, structs, trees, or lists in your<span>&nbsp;</span><code>mm.c</code><span>&nbsp;</span>program.
+
+
+
+
+        You<span>&nbsp;</span><em>are</em><span>&nbsp;</span>allowed to
+        declare global scalar variables such as integers, floats, and
+        pointers in<span>&nbsp;</span><code>mm.c</code>, but try to keep
+        these to a minimum. (It is possible to complete the
+        implementation of the explicit free list without adding any
+        global variables.)</li>
+      <li>For consistency with the<span>&nbsp;</span><code>malloc</code><span>&nbsp;</span>implementation
+
+
+
+
+        in<span>&nbsp;</span><code>libc</code>, which returns blocks
+        aligned on 8-byte boundaries, your allocator must always return
+        pointers that are aligned to 8-byte boundaries. The driver will
+        enforce this requirement for you.</li>
+    </ul>
+    <br class="Apple-interchange-newline">
+    <font size="+2"><b>Evaluation</b></font><br>
+    <br>
+    Your grade will be calculated (as a percentage) out of a total of 60
+    points as follows:
+    <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0, 0,
+      0); font-family: Times; font-size: medium; font-style: normal;
+      font-variant-ligatures: normal; font-variant-caps: normal;
+      font-weight: normal; letter-spacing: normal; orphans: 2;
+      text-align: start; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; text-decoration-style: initial;
+      text-decoration-color: initial;">
+      <li><strong>Correctness (45 points).</strong><span>&nbsp;</span>You
+
+
+
+
+        will receive 5 points for each test performed by the driver
+        program that your solution passes. (9 tests)</li>
+      <li><strong>Style (10 points).</strong>
+        <ul style="margin-bottom: 2px; margin-left: 50px;">
+          <li>Your code should use as few global variables as possible
+            (ideally none!).</li>
+          <li>Your code should be as clear and concise as possible.</li>
+          <li>You should use provided macros as appropriate.</li>
+          <li>Since some of the unstructured pointer manipulation
+            inherent to allocators can be confusing, short inline
+            comments on steps of the allocation algorithms are also
+            recommended. (These will also help us give you partial
+            credit if you have a partially working implementation.)</li>
+          <li>Each function should have a header comment that describes
+            what it does and how it does it.</li>
+        </ul>
+      </li>
+      <li><strong>Performance (5 points).</strong><span>&nbsp;</span>Performance
+
+
+
+
+        represents a small portion of your grade. I am most concerned
+        about the correctness of your implementation. For the most part,
+        a correct implementation will yield reasonable performance. Two
+        performance metrics will be used to evaluate your solution:
+        <ul style="margin-bottom: 2px; margin-left: 50px;">
+          <li><i>Space utilization</i>: The peak ratio between the
+            aggregate amount of memory used by the driver (i.e.,
+            allocated via<span>&nbsp;</span><code>mm_malloc</code><span>&nbsp;</span>but
+
+
+
+
+            not yet freed via<span>&nbsp;</span><code>mm_free</code>)
+            and the size of the heap used by your allocator. The optimal
+            ratio is 1,<span>&nbsp;</span><font color="red">although in
+              practice we will not be able to achieve that ratio</font>.
+            You should find good policies to minimize fragmentation in
+            order to make this ratio as close as possible to the
+            optimal.</li>
+          <li><i>Throughput</i>: The average number of operations
+            completed per second.</li>
+        </ul>
+        The driver program summarizes the performance of your allocator
+        by computing a<span>&nbsp;</span><strong>performance index</strong>,
+        P, which is a weighted sum of the space utilization and
+        throughput:
+        <pre><code>P = 0.6U + 0.4 min (1, T/Tlibc)</code></pre>
+        where U is your space utilization, T is your throughput, and T<sub>libc</sub><span>&nbsp;</span>is
+
+
+
+
+        the estimated throughput of<span>&nbsp;</span><code>libc</code><span>&nbsp;</span>malloc
+
+
+
+
+        on your system on the default traces. The performance index
+        favors space utilization over throughput. You will receive 5(P+
+        0.1) points, rounded<span>&nbsp;</span><strong>up</strong><span>&nbsp;</span>to
+
+
+
+
+        the closest whole point. For example, a solution with a
+        performance index of 0.63 or 63% will receive 4 performance
+        points. Our complete version of the explicit free list allocator
+        has a performance index between just over 0.7 and 0.8; it would
+        receive a full 5 points.<span>&nbsp;</span><b>Thus if you have a
+          performance index GREATER THAN 0.7 (mdriver prints this as
+          "70/100") then you will get the full 5 points for Performance.</b><span>&nbsp;</span>Observing
+
+
+
+
+        that both memory and CPU cycles are expensive system resources,
+        I adopt this formula to encourage balanced optimization of both
+        memory utilization and throughput. Ideally, the performance
+        index will reach P = 1 or 100%. To receive a good performance
+        score, you must achieve a balance between utilization and
+        throughput.</li>
+    </ul>
+    <br>
+    <font size="+2"><b>Hints<br>
+        <br>
+      </b><b><font size="+1">Getting Started<br>
+        </font></b></font><font size="+2"><b>
+        <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0,
+          0, 0); font-family: Times; font-size: medium; font-style:
+          normal; font-variant-ligatures: normal; font-variant-caps:
+          normal; font-weight: normal; letter-spacing: normal; orphans:
+          2; text-align: start; text-indent: 0px; text-transform: none;
+          white-space: normal; widows: 2; word-spacing: 0px;
+          -webkit-text-stroke-width: 0px; text-decoration-style:
+          initial; text-decoration-color: initial;">
+          <li>Read these instructions.</li>
+          <li>Read over the provided code.</li>
+          <li>Take notes while doing the above.</li>
+          <li>Draw some diagrams of what the data structures should look
+            like before and after various operations.</li>
+          <li>Note that there is a metadata associated, e.g., in the
+            pointer to the BlockInfo structure. This pointer is equal to
+            the WORD_SIZE, which is either 4 bytes or 8 bytes depending
+            on whether the machine is 32-bits or 64-bits.&nbsp; The
+            class VM is 32-bits.&nbsp; As a result, on a 32-bit machine,
+            the free list header **is not** 8 bytes aligned (and is
+            instead 4 bytes aligned).&nbsp; The malloc function, though,
+            will always return (BlockInfo* + WORD_SIZE), which will
+            always be 8-byte aligned regardless of whether a machine is
+            32 bits or 64 bits.</li>
+        </ul>
+        <p><font size="+1">Debugging</font><br>
+        </p>
+        <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0,
+          0, 0); font-family: Times; font-size: medium; font-style:
+          normal; font-variant-ligatures: normal; font-variant-caps:
+          normal; font-weight: normal; letter-spacing: normal; orphans:
+          2; text-align: start; text-indent: 0px; text-transform: none;
+          white-space: normal; widows: 2; word-spacing: 0px;
+          -webkit-text-stroke-width: 0px; text-decoration-style:
+          initial; text-decoration-color: initial;">
+          <li>Use the<span>&nbsp;</span><code>mdriver</code><span>&nbsp;</span><code>-f</code><span>&nbsp;</span>option.
+
+
+
+
+            During initial development, using tiny trace files will
+            simplify debugging and testing. I have included two such
+            trace files (<code>short1-bal.rep</code><span>&nbsp;</span>and<span>&nbsp;</span><code>short2-bal.rep</code>)
+            that you can use for initial debugging.</li>
+          <li>Use the<span>&nbsp;</span><code>mdriver</code><span>&nbsp;</span><code>-v</code><span>&nbsp;</span>and<span>&nbsp;</span><code>-V</code><span>&nbsp;</span>options.
+
+
+
+
+            The<span>&nbsp;</span><code>-v</code><span>&nbsp;</span>option
+
+
+
+
+            will give you a detailed summary for each trace file. The<span>&nbsp;</span><code>-V</code><span>&nbsp;</span>will
+
+
+
+
+            also indicate when each trace file is read, which will help
+            you isolate errors.</li>
+          <li>Compile with<span>&nbsp;</span><code>gcc -g</code><span>&nbsp;</span>and
+
+
+
+
+            use<span>&nbsp;</span><code>gdb</code>. The<span>&nbsp;</span><code>-g</code><span>&nbsp;</span>flag
+
+
+
+
+            tells<span>&nbsp;</span><code>gcc</code><span>&nbsp;</span>to
+
+
+
+
+            include debugging symbols, so<span>&nbsp;</span><code>gdb</code><span>&nbsp;</span>can
+
+
+
+
+            follow the source code as it steps through the executable.
+            The<span>&nbsp;</span><code>Makefile</code><span>&nbsp;</span>should
+
+
+
+
+            already be set up to do this. A debugger will help you
+            isolate and identify out of bounds memory references. You
+            can specify any command line arguments for<span>&nbsp;</span><code>mdriver</code><span>&nbsp;</span>after
+
+
+
+
+            the<span>&nbsp;</span><code>run</code><span>&nbsp;</span>command
+
+
+
+
+            in<span>&nbsp;</span><code>gdb</code><span>&nbsp;</span>e.g.<span>&nbsp;</span><code>run
+
+
+
+
+              -f short1-bal.rep</code>.</li>
+          <li>Understand every line of the malloc implementation in the
+            textbook. The textbook has a detailed example of a simple
+            allocator based on an implicit free list. Use this as a
+            point of departure. Don't start working on your allocator
+            until you understand everything about the simple implicit
+            list allocator.</li>
+          <li>Write a function that treats the heap as an implicit list
+            (see examine_heap above), and prints all header information
+            from all the blocks in the heap. Using<span>&nbsp;</span><code>fprintf</code><span>&nbsp;</span>to
+
+
+
+
+            print to<span>&nbsp;</span><code>stderr</code><span>&nbsp;</span>is
+
+
+
+
+            helpful here because standard error is not buffered so you
+            will get output from your print statements even if the next
+            statement crashes your program.</li>
+          <li>Encapsulate your pointer arithmetic in C preprocessor
+            macros. Pointer arithmetic in memory managers is confusing
+            and error-prone because of all the casting that is
+            necessary. I have supplied macros that do this: see<span>&nbsp;</span><code>UNSCALED_POINTER_ADD</code><span>&nbsp;</span>and<span>&nbsp;</span><code>UNSCALED_POINTER_SUB</code>.</li>
+          <li>Start early! It is possible to write an efficient malloc
+            package with a few pages of code. However, I can guarantee
+            that it will be some of the most difficult and sophisticated
+            code you have written so far in your career. So start early,
+            and good luck!</li>
+        </ul>
+        <br>
+        <font size="+1">Heap Consistency Checker</font></b></font><em></em><br>
+    <em></em><font size="+2"><b>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;"><em>This is an optional addition</em><span>&nbsp;</span>that
+
+
+
+
+          may help you check to see if your allocator is doing what it
+          should (or figure out what it's doing wrong if not). Dynamic
+          memory allocators are notoriously tricky beasts to program
+          correctly and efficiently. They are difficult to program
+          correctly because they involve a lot of untyped pointer
+          manipulation. In addition to the usual debugging techniques,
+          you may find it helpful to write a heap checker that scans the
+          heap and checks it for consistency.</p>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;">Some examples of what a heap checker might check
+          are:</p>
+        <ul style="margin-bottom: 2px; margin-left: 50px; color: rgb(0,
+          0, 0); font-family: Times; font-size: medium; font-style:
+          normal; font-variant-ligatures: normal; font-variant-caps:
+          normal; font-weight: normal; letter-spacing: normal; orphans:
+          2; text-align: start; text-indent: 0px; text-transform: none;
+          white-space: normal; widows: 2; word-spacing: 0px;
+          -webkit-text-stroke-width: 0px; text-decoration-style:
+          initial; text-decoration-color: initial;">
+          <li>Is every block in the free list marked as free?</li>
+          <li>Are there any contiguous free blocks that somehow escaped
+            coalescing?</li>
+          <li>Is every free block actually in the free list?</li>
+          <li>Do the pointers in the free list point to valid free
+            blocks?</li>
+          <li>Do any allocated blocks overlap?</li>
+          <li>Do the pointers in a heap block point to valid heap
+            addresses?</li>
+        </ul>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;">Your heap checker will consist of the function<span>&nbsp;</span><code>int
+
+
+
+
+            mm_check(void)</code><span>&nbsp;</span>in<span>&nbsp;</span><code>mm.c</code>.
+          Feel free to rename it, break it into several functions, and
+          call it wherever you want. It should check any invariants or
+          consistency conditions you consider prudent. It returns a
+          nonzero value if and only if your heap is consistent. This is
+          not required, but may prove useful. When you submit<span>&nbsp;</span><code>mm.c</code>,
+          make sure to remove any calls to<span>&nbsp;</span><code>mm_check</code><span>&nbsp;</span>as
+
+
+
+
+          they will slow down your throughput<b>.<br>
+            <br>
+          </b></p>
+      </b></font><font size="+1"><b>Optional Extra Credit (10pts)</b></font><font size="+2"><b>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;"><br>
+          As optional extra credit, implement a final memory
+          allocation-related function:<span>&nbsp;</span><code>mm_realloc</code>.
+          The signature for this function, which you will find in your<span>&nbsp;</span><code>mm.h</code><span>&nbsp;</span>file,
+
+
+
+
+          is:</p>
+      </b></font><font size="+2"><b>
+        <pre style="color: rgb(0, 0, 0); font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;"><font size="+1">	extern void* mm_realloc(void* ptr, size_t size);</font>
+</pre>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;">Similarly, you should find the following in your<span>&nbsp;</span><code>mm.c</code><span>&nbsp;</span>file:</p>
+        <pre style="color: rgb(0, 0, 0); font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;">	<font size="+1">void* mm_realloc(void* ptr, size_t size) {
+	  // ... implementation here ...
+	}</font>
+</pre>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;">To receive credit, you should follow the contract of
+          the C library's<span>&nbsp;</span><code>realloc</code><span>&nbsp;</span>exactly
+
+
+
+
+          (pretending that<span>&nbsp;</span><code>malloc</code><span>&nbsp;</span>and<span>&nbsp;</span><code>free</code><span>&nbsp;</span>are<span>&nbsp;</span><code>mm_malloc</code><span>&nbsp;</span>and<span>&nbsp;</span><code>mm_free</code>,
+          etc.). The man page entry for<span>&nbsp;</span><code>realloc</code><span>&nbsp;</span>says:</p>
+        <pre style="color: rgb(0, 0, 0); font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;">	 <font size="+1">The realloc() function changes the size of the memory block pointed to by
+	   ptr to size bytes.  The contents will be unchanged in the range from the
+	   start of the region up to the minimum of the old and new sizes.  If the
+	   new size is larger than the old size, the added memory will not be
+	   initialized.  If ptr is NULL, then the call is equivalent to
+	   malloc(size), for all values of size; if size is equal to zero, and ptr
+	   is not NULL, then the call is equivalent to free(ptr).  Unless ptr is
+	   NULL, it must have been returned by an earlier call to malloc(), calloc()
+	   or realloc().  If the area pointed to was moved, a free(ptr) is done.</font>
+</pre>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;">A good test would be to compare the behavior of your<span>&nbsp;</span><code>mm_realloc</code><span>&nbsp;</span>to
+
+
+
+
+          that of<span>&nbsp;</span><code>realloc</code>, checking each
+          of the above cases. Your implementation of<span>&nbsp;</span><code>mm_realloc</code><span>&nbsp;</span>should
+
+
+
+
+          also be performant. Avoid copying memory if possible, making
+          use of nearby free blocks. You should not use<span>&nbsp;</span><code>memcpy</code><span>&nbsp;</span>to
+
+
+
+
+          copy memory; instead, copy<span>&nbsp;</span><code>WORD_SIZE</code><span>&nbsp;</span>bytes
+
+
+
+
+          at a time to the new destination while iterating over the
+          existing data.</p>
+        <p class="text" style="font-size: medium; text-align: left;
+          position: relative; margin-left: 50px; margin-top: 5px;
+          margin-bottom: 8px; width: 810px; background: rgb(255, 255,
+          255); color: rgb(0, 0, 0); padding-left: 6px; padding-right:
+          6px; border: 2px solid rgb(255, 255, 255); font-family: Times;
+          font-style: normal; font-variant-ligatures: normal;
+          font-variant-caps: normal; font-weight: normal;
+          letter-spacing: normal; orphans: 2; text-indent: 0px;
+          text-transform: none; white-space: normal; widows: 2;
+          word-spacing: 0px; -webkit-text-stroke-width: 0px;
+          text-decoration-style: initial; text-decoration-color:
+          initial;">To run tracefiles that test<span>&nbsp;</span><code>mm_realloc</code>,
+          compile using<span>&nbsp;</span><code>make mdriver-realloc</code>.
+          Then, run<span>&nbsp;</span><code>mmdriver-realloc</code>with
+          the<span>&nbsp;</span><code>-f</code><span>&nbsp;</span>flag
+          to specify a tracefile, or first edit<span>&nbsp;</span><code>config.h</code><span>&nbsp;</span>to
+
+
+
+
+          include additional realloc tracefiles in the default list.</p>
+        <br>
+        Resources<br>
+        <br>
+      </b></font><a href="https://courses.umass.edu/eceng322-deirwin/fall24/assignments/malloc-uw.pdf" moz-do-not-send="true">Notes
+      from malloc assignment at UW</a><b><br>
+    </b><font size="+2"><b><br>
+        Submission Instructions</b></font><br>
+    <br>
+    Put your name, and the name of your partner, at the top of your mm.c
+    file and indicate whether you attempted the extra credit.&nbsp; We
+    will not look to grade the extra credit unless you indicate that you
+    attempted it.&nbsp; Then submit your mm.c file to Canvas by the due
+    date.<br>
+    <br>
+    <title>shlab.dvi</title>
+  
+
+</body></html>
