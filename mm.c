@@ -377,48 +377,50 @@ void *mm_malloc(size_t size) {
   if (ptrFreeBlock == NULL) { // if no free block, extendheap
     requestMoreSpace(reqSize);
     ptrFreeBlock = searchFreeList(reqSize); // reasign
-    if (ptrFreeBlock == NULL){
-      return NULL; //if still not right size, give up
+    if (ptrFreeBlock == NULL) {
+      return NULL; // if still not right size, give up
     }
-  } 
-  //check if block is too big
-  if(SIZE(ptrFreeBlock->sizeAndTags) > (reqSize + MIN_BLOCK_SIZE)){
-    //resize block
+  }
+  // check if block is too big
+  if (SIZE(ptrFreeBlock->sizeAndTags) > (reqSize + MIN_BLOCK_SIZE)) {
+      mm_realloc(ptrFreeBlock, reqSize);
   }
   removeFreeBlock(ptrFreeBlock);
-  //set block information as allocated
+  // set block information as allocated
+  ptrFreeBlock->sizeAndTags &= TAG_USED;
 
-  return (void*)((char*)ptrFreeBlock + WORD_SIZE); //return pointer to block excluding header
+  return (void *)((char *)ptrFreeBlock +
+                  WORD_SIZE); // return pointer to block excluding header
 }
 
 /* Free the block referenced by ptr. */
 void mm_free(void *ptr) {
-    // Handle NULL pointer
-    if (ptr == NULL) {
-        return;
-    }
+  // Handle NULL pointer
+  if (ptr == NULL) {
+    return;
+  }
 
-    // Get BlockInfo pointer from payload pointer
-    BlockInfo *blockInfo = (BlockInfo *)((char *)ptr - WORD_SIZE);
-    size_t payloadSize = SIZE(blockInfo->sizeAndTags);
-    BlockInfo *followingBlock = (BlockInfo *)((char *)blockInfo + payloadSize);
+  // Get BlockInfo pointer from payload pointer
+  BlockInfo *blockInfo = (BlockInfo *)((char *)ptr - WORD_SIZE);
+  size_t payloadSize = SIZE(blockInfo->sizeAndTags);
+  BlockInfo *followingBlock = (BlockInfo *)((char *)blockInfo + payloadSize);
 
-    // Mark block as free
-    blockInfo->sizeAndTags &= ~TAG_USED;
-    
-    // Mark the following block's prev allocated bit
-    // Assuming TAG_PREV_ALLOCATED is defined as 2
-    #ifndef TAG_PREV_ALLOCATED
-    #define TAG_PREV_ALLOCATED 2
-    #endif
-    
-    followingBlock->sizeAndTags &= ~TAG_PREV_ALLOCATED;
+  // Mark block as free
+  blockInfo->sizeAndTags &= ~TAG_USED;
 
-    // Coalesce with adjacent free blocks
-    coalesceFreeBlock(blockInfo);
+// Mark the following block's prev allocated bit
+// Assuming TAG_PREV_ALLOCATED is defined as 2
+#ifndef TAG_PREV_ALLOCATED
+#define TAG_PREV_ALLOCATED 2
+#endif
 
-    // Insert the (possibly coalesced) block into free list
-    insertFreeBlock(blockInfo);
+  followingBlock->sizeAndTags &= ~TAG_PREV_ALLOCATED;
+
+  // Coalesce with adjacent free blocks
+  coalesceFreeBlock(blockInfo);
+
+  // Insert the (possibly coalesced) block into free list
+  insertFreeBlock(blockInfo);
 }
 
 // Implement a heap consistency checker as needed.
