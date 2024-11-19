@@ -393,12 +393,32 @@ void *mm_malloc(size_t size) {
 
 /* Free the block referenced by ptr. */
 void mm_free(void *ptr) {
-  size_t payloadSize;
-  BlockInfo *blockInfo;
-  BlockInfo *followingBlock;
+    // Handle NULL pointer
+    if (ptr == NULL) {
+        return;
+    }
 
-  // Implement mm_free.  You can change or remove the declaraions
-  // above.  They are included as minor hints.
+    // Get BlockInfo pointer from payload pointer
+    BlockInfo *blockInfo = (BlockInfo *)((char *)ptr - WORD_SIZE);
+    size_t payloadSize = SIZE(blockInfo->sizeAndTags);
+    BlockInfo *followingBlock = (BlockInfo *)((char *)blockInfo + payloadSize);
+
+    // Mark block as free
+    blockInfo->sizeAndTags &= ~TAG_USED;
+    
+    // Mark the following block's prev allocated bit
+    // Assuming TAG_PREV_ALLOCATED is defined as 2
+    #ifndef TAG_PREV_ALLOCATED
+    #define TAG_PREV_ALLOCATED 2
+    #endif
+    
+    followingBlock->sizeAndTags &= ~TAG_PREV_ALLOCATED;
+
+    // Coalesce with adjacent free blocks
+    coalesceFreeBlock(blockInfo);
+
+    // Insert the (possibly coalesced) block into free list
+    insertFreeBlock(blockInfo);
 }
 
 // Implement a heap consistency checker as needed.
