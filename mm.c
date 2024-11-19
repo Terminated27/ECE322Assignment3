@@ -11,11 +11,15 @@
  *   in memory.
  *-------------------------------------------------------------------- */
 
+#include <alloca.h>
 #include <assert.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> //for memmove
 #include <unistd.h>
 
+#include "config.h"
 #include "memlib.h"
 #include "mm.h"
 
@@ -383,7 +387,7 @@ void *mm_malloc(size_t size) {
   }
   // check if block is too big
   if (SIZE(ptrFreeBlock->sizeAndTags) > (reqSize + MIN_BLOCK_SIZE)) {
-      mm_realloc(ptrFreeBlock, reqSize);
+    mm_realloc(ptrFreeBlock, reqSize);
   }
   removeFreeBlock(ptrFreeBlock);
   // set block information as allocated
@@ -429,5 +433,40 @@ int mm_check() { return 0; }
 // Extra credit.
 void *mm_realloc(void *ptr, size_t size) {
   // ... implementation here ...
+  if (ptr == NULL) { // if nullptr then behave as malloc
+    return mm_malloc(size);
+  }
+  if (size == 0) { // if size is 0, behave as free
+    mm_free(ptr);
+    return NULL;
+  }
+
+  size_t newSize = size + WORD_SIZE; // include space for header
+  if (newSize <= MIN_BLOCK_SIZE) {
+    newSize = MIN_BLOCK_SIZE;
+  } else {
+    newSize = ALIGNMENT * ((newSize + ALIGNMENT - 1) /
+                           ALIGNMENT); // find next closest multiple of
+                                       // alignment size that is big enough
+  }
+
+  // find blocks current size
+  // move pointer to header to collect info from pointer
+  struct BlockInfo *block =
+      (struct BlockInfo *)UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
+  size_t currentSize = SIZE(block->sizeAndTags);
+  if (newSize <= currentSize) { // resize block
+    block->sizeAndTags = block->sizeAndTags & (ALIGNMENT - 1) | newSize & ~(ALIGNMENT -1);
+  } else {
+    void *newBlockPtr = mm_malloc(size);
+    if (newBlockPtr == NULL) {
+      return NULL; // allocation failed
+    }
+    // copy data to new block
+    memmove(newBlockPtr, ptr, currentSize - WORD_SIZE);
+    mm_free(ptr); //free old block
+    return newBlockPtr;
+  }
+
   return NULL;
 }
