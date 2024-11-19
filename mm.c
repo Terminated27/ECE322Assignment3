@@ -373,12 +373,12 @@ void *mm_malloc(size_t size) {
     // next pointer, the prev pointer, and the boundary tag).
     reqSize = MIN_BLOCK_SIZE;
   } else {
-    // Round up for correct alignment
+    // Round up for correct alignment in multiples of ALIGNEMTN
     reqSize = ALIGNMENT * ((size + ALIGNMENT - 1) / ALIGNMENT);
   }
   // find free block
   ptrFreeBlock = searchFreeList(reqSize);
-  if (ptrFreeBlock == NULL) { // if no free block, extendheap
+  if (ptrFreeBlock == NULL) { // if no free block, extend
     requestMoreSpace(reqSize);
     ptrFreeBlock = searchFreeList(reqSize); // reasign
     if (ptrFreeBlock == NULL) {
@@ -455,9 +455,9 @@ void *mm_realloc(void *ptr, size_t size) {
   struct BlockInfo *block =
       (struct BlockInfo *)UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
   size_t currentSize = SIZE(block->sizeAndTags);
-  if (newSize <= currentSize) { // resize block
+  if (newSize <= currentSize) { // resize block by bitmasking size bits and updating only those
     block->sizeAndTags = block->sizeAndTags & (ALIGNMENT - 1) | newSize & ~(ALIGNMENT -1);
-  } else {
+  } else { // if newsize is greater than current size, run malloc
     void *newBlockPtr = mm_malloc(size);
     if (newBlockPtr == NULL) {
       return NULL; // allocation failed
