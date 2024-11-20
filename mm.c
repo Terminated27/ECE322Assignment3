@@ -358,12 +358,10 @@ void *mm_malloc(size_t size) {
   BlockInfo *ptrFreeBlock = NULL;
   size_t blockSize;
   size_t precedingBlockUseTag;
-
   // Zero-size requests get NULL.
   if (size == 0) {
     return NULL;
   }
-
   // Add one word for the initial size header.
   // Note that we don't need to boundary tag when the block is used!
   size += WORD_SIZE;
@@ -389,6 +387,7 @@ void *mm_malloc(size_t size) {
   if (SIZE(ptrFreeBlock->sizeAndTags) > (reqSize + MIN_BLOCK_SIZE)) {
     mm_realloc(ptrFreeBlock, reqSize);
   }
+
   removeFreeBlock(ptrFreeBlock);
   // set block information as allocated
   ptrFreeBlock->sizeAndTags |= TAG_USED;
