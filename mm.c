@@ -391,7 +391,7 @@ void *mm_malloc(size_t size) {
   }
   removeFreeBlock(ptrFreeBlock);
   // set block information as allocated
-  ptrFreeBlock->sizeAndTags &= TAG_USED;
+  ptrFreeBlock->sizeAndTags |= TAG_USED;
 
   return (void *)((char *)ptrFreeBlock +
                   WORD_SIZE); // return pointer to block excluding header
@@ -455,8 +455,10 @@ void *mm_realloc(void *ptr, size_t size) {
   struct BlockInfo *block =
       (struct BlockInfo *)UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
   size_t currentSize = SIZE(block->sizeAndTags);
-  if (newSize <= currentSize) { // resize block by bitmasking size bits and updating only those
-    block->sizeAndTags = block->sizeAndTags & (ALIGNMENT - 1) | newSize & ~(ALIGNMENT -1);
+  if (newSize <= currentSize) { // resize block by bitmasking size bits and
+                                // updating only those
+    block->sizeAndTags =
+        (block->sizeAndTags & ~(ALIGNMENT - 1)) | (newSize & ~(ALIGNMENT - 1));
   } else { // if newsize is greater than current size, run malloc
     void *newBlockPtr = mm_malloc(size);
     if (newBlockPtr == NULL) {
@@ -464,7 +466,7 @@ void *mm_realloc(void *ptr, size_t size) {
     }
     // copy data to new block
     memmove(newBlockPtr, ptr, currentSize - WORD_SIZE);
-    mm_free(ptr); //free old block
+    mm_free(ptr); // free old block
     return newBlockPtr;
   }
 
