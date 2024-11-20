@@ -358,6 +358,8 @@ void *mm_malloc(size_t size) {
   BlockInfo *ptrFreeBlock = NULL;
   size_t blockSize;
   size_t precedingBlockUseTag;
+  BlockInfo *newFreeBlock;
+  BlockInfo *followingBlock;
   // Zero-size requests get NULL.
   if (size == 0) {
     return NULL;
@@ -383,19 +385,46 @@ void *mm_malloc(size_t size) {
       return NULL; // if still not right size, give up
     }
   }
+  blockSize = SIZE(ptrFreeBlock->sizeAndTags);
+  precedingBlockUseTag = (ptrFreeBlock->sizeAndTags) & TAG_PRECEDING_USED;
+
   // check if block is too big
-  if (SIZE(ptrFreeBlock->sizeAndTags) > (reqSize + MIN_BLOCK_SIZE)) {
-    mm_realloc(ptrFreeBlock, reqSize);
+  if (blockSize > (reqSize + MIN_BLOCK_SIZE)) {
+    // update size and tags
+    ptrFreeBlock->sizeAndTags = reqSize | precedingBlockUseTag;
+    // set blocks use tags to 1
+    ptrFreeBlock->sizeAndTags = ptrFreeBlock->sizeAndTags | TAG_USED;
+
+    // copies old info into new block
+    newFreeBlock = (BlockInfo *)UNSCALED_POINTER_ADD(ptrFreeBlock, reqSize);
+    // turn on preceding tag and update the size of the header
+    newFreeBlock->sizeAndTags = ((blockSize - reqSize) | TAG_PRECEDING_USED);
+    // turn of tag used tag
+    newFreeBlock->sizeAndTags = newFreeBlock->sizeAndTags & (~TAG_USED);
+
+    // set the new blocks footer tag
+    *((size_t *)UNSCALED_POINTER_ADD(ptrFreeBlock, (blockSize - WORD_SIZE))) =
+        blockSize - reqSize;
+
+    // put the new block into the free list
+    insertFreeBlock(newFreeBlock);
+
+  } else {
+    // collect the pointer to the next block
+    followingBlock = (BlockInfo *)UNSCALED_POINTER_ADD(ptrFreeBlock, blockSize);
+    // set the following blocks tag
+    followingBlock->sizeAndTags =
+        followingBlock->sizeAndTags | TAG_PRECEDING_USED;
+
+    // set the current blocks tag
+    ptrFreeBlock->sizeAndTags = ptrFreeBlock->sizeAndTags | TAG_USED;
   }
 
   removeFreeBlock(ptrFreeBlock);
-  // set block information as allocated
-  ptrFreeBlock->sizeAndTags |= TAG_USED;
 
-  return (void *)((char *)ptrFreeBlock +
-                  WORD_SIZE); // return pointer to block excluding header
+  return ((void *)UNSCALED_POINTER_ADD(
+      ptrFreeBlock, WORD_SIZE)); // return pointer to block excluding header
 }
-
 
 /* Free the block referenced by ptr. */
 void mm_free(void *ptr) {
