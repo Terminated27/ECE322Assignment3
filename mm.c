@@ -360,12 +360,12 @@ void* mm_malloc (size_t size) {
   BlockInfo * ptrFreeBlock = NULL;
   size_t blockSize;
   size_t precedingBlockUseTag;
-
+  BlockInfo *newFreeBlock;
+  BlockInfo *followingBlock;
   // Zero-size requests get NULL.
   if (size == 0) {
     return NULL;
   }
-
   // Add one word for the initial size header.
   // Note that we don't need to boundary tag when the block is used!
   size += WORD_SIZE;
@@ -385,57 +385,52 @@ void* mm_malloc (size_t size) {
   
   // search free list for first available spot
   ptrFreeBlock = searchFreeList(reqSize);
-  
-  if (!ptrFreeBlock) {
-     // out of room, need more heap space then look again
-     requestMoreSpace(reqSize * 5);
-     ptrFreeBlock = searchFreeList(reqSize);
+  if (ptrFreeBlock == NULL) { // if no free block, extend
+    requestMoreSpace(reqSize);
+    ptrFreeBlock = searchFreeList(reqSize); // reasign
+    if (ptrFreeBlock == NULL) {
+      return NULL; // if still not right size, give up
+    }
   }
+  blockSize = SIZE(ptrFreeBlock->sizeAndTags);
+  precedingBlockUseTag = (ptrFreeBlock->sizeAndTags) & TAG_PRECEDING_USED;
 
-  // get selected free block's total size
-  blockSize = SIZE(ptrFreeBlock -> sizeAndTags);
+  // check if block is too big
+  if (blockSize > (reqSize + MIN_BLOCK_SIZE)) {
+    // update size and tags
+    ptrFreeBlock->sizeAndTags = reqSize | precedingBlockUseTag;
+    // set blocks use tags to 1
+    ptrFreeBlock->sizeAndTags = ptrFreeBlock->sizeAndTags | TAG_USED;
 
-  // store preceding used tag of allocated block
-  precedingBlockUseTag = (ptrFreeBlock -> sizeAndTags) & TAG_PRECEDING_USED;
+    // copies old info into new block
+    newFreeBlock = (BlockInfo *)UNSCALED_POINTER_ADD(ptrFreeBlock, reqSize);
+    // turn on preceding tag and update the size of the header
+    newFreeBlock->sizeAndTags = ((blockSize - reqSize) | TAG_PRECEDING_USED);
+    // turn of tag used tag
+    newFreeBlock->sizeAndTags = newFreeBlock->sizeAndTags & (~TAG_USED);
 
-  // now we can remove block from free list
-  removeFreeBlock(ptrFreeBlock);
+    // set the new blocks footer tag
+    *((size_t *)UNSCALED_POINTER_ADD(ptrFreeBlock, (blockSize - WORD_SIZE))) =
+        blockSize - reqSize;
 
-  // split block if there is extra room left
-  if (blockSize - reqSize >= MIN_BLOCK_SIZE) {
-    // update block's size and tags
-    ptrFreeBlock -> sizeAndTags = reqSize | precedingBlockUseTag;
-    // set current block's use tag to 1
-    ptrFreeBlock -> sizeAndTags = ptrFreeBlock -> sizeAndTags | TAG_USED;
-
-    // set up what's left of the old free block into a new free block
-    // takes care of size and tags
-    BlockInfo* newFreeBlock = (BlockInfo*) UNSCALED_POINTER_ADD(ptrFreeBlock, reqSize);
-    // turn on preceding tag used and update size of header
-    newFreeBlock -> sizeAndTags = ((blockSize - reqSize) | TAG_PRECEDING_USED);
-    // turn off tag used
-    newFreeBlock -> sizeAndTags = newFreeBlock -> sizeAndTags & (~TAG_USED);
-
-    // set new free block's footer  size. block footer tags should stay same
-    *((size_t*) UNSCALED_POINTER_ADD(ptrFreeBlock, (blockSize - WORD_SIZE))) = blockSize - reqSize;
-
-    // Insert the new block back into the free list
+    // put the new block into the free list
     insertFreeBlock(newFreeBlock);
 
   } else {
-    
-    // get pointer to the next block, we KNOW it is allocated memory
-    BlockInfo* followingBlock = (BlockInfo*) UNSCALED_POINTER_ADD(ptrFreeBlock, blockSize);
-    // set the following block's previous used tag
-    followingBlock -> sizeAndTags = followingBlock -> sizeAndTags | TAG_PRECEDING_USED;
+    // collect the pointer to the next block
+    followingBlock = (BlockInfo *)UNSCALED_POINTER_ADD(ptrFreeBlock, blockSize);
+    // set the following blocks tag
+    followingBlock->sizeAndTags =
+        followingBlock->sizeAndTags | TAG_PRECEDING_USED;
 
-    // set the current block's used tag
-    ptrFreeBlock -> sizeAndTags = ptrFreeBlock -> sizeAndTags | TAG_USED;
+    // set the current blocks tag
+    ptrFreeBlock->sizeAndTags = ptrFreeBlock->sizeAndTags | TAG_USED;
   }
 
-  // returns pointer to the start of used memory
-  return ((void*) UNSCALED_POINTER_ADD(ptrFreeBlock, WORD_SIZE));
+  removeFreeBlock(ptrFreeBlock);
 
+  return ((void *)UNSCALED_POINTER_ADD(
+      ptrFreeBlock, WORD_SIZE)); // return pointer to block excluding header
 }
 
 /* Free the block referenced by ptr. */
@@ -474,6 +469,47 @@ void mm_free (void *ptr) {
 }
 
 // Implement a heap consistency checker as needed.
-int mm_check() {
-  return 0;
+int mm_check() { return 0; }
+
+// Extra credit.
+void *mm_realloc(void *ptr, size_t size) {
+  // ... implementation here ...
+  if (ptr == NULL) { // if nullptr then behave as malloc
+    return mm_malloc(size);
+  }
+  if (size == 0) { // if size is 0, behave as free
+    mm_free(ptr);
+    return NULL;
+  }
+
+  size_t newSize = size + WORD_SIZE; // include space for header
+  if (newSize <= MIN_BLOCK_SIZE) {
+    newSize = MIN_BLOCK_SIZE;
+  } else {
+    newSize = ALIGNMENT * ((newSize + ALIGNMENT - 1) /
+                           ALIGNMENT); // find next closest multiple of
+                                       // alignment size that is big enough
+  }
+
+  // find blocks current size
+  // move pointer to header to collect info from pointer
+  struct BlockInfo *block =
+      (struct BlockInfo *)UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
+  size_t currentSize = SIZE(block->sizeAndTags);
+  if (newSize <= currentSize) { // resize block by bitmasking size bits and
+                                // updating only those
+    block->sizeAndTags =
+        (block->sizeAndTags & ~(ALIGNMENT - 1)) | (newSize & ~(ALIGNMENT - 1));
+  } else { // if newsize is greater than current size, run malloc
+    void *newBlockPtr = mm_malloc(size);
+    if (newBlockPtr == NULL) {
+      return NULL; // allocation failed
+    }
+    // copy data to new block
+    memmove(newBlockPtr, ptr, currentSize - WORD_SIZE);
+    mm_free(ptr); // free old block
+    return newBlockPtr;
+  }
+
+  return NULL;
 }
