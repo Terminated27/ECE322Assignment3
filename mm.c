@@ -352,10 +352,12 @@ int mm_init() {
 
 // TOP-LEVEL ALLOCATOR INTERFACE ------------------------------------
 
-/* Allocate a block of size size and return a pointer to it. */
-void *mm_malloc(size_t size) {
+/* Allocate a block of size size and return a pointer to it. If size is zero,
+ * returns null.
+ */
+void* mm_malloc (size_t size) {
   size_t reqSize;
-  BlockInfo *ptrFreeBlock = NULL;
+  BlockInfo * ptrFreeBlock = NULL;
   size_t blockSize;
   size_t precedingBlockUseTag;
   BlockInfo *newFreeBlock;
@@ -373,10 +375,15 @@ void *mm_malloc(size_t size) {
     // next pointer, the prev pointer, and the boundary tag).
     reqSize = MIN_BLOCK_SIZE;
   } else {
-    // Round up for correct alignment in multiples of ALIGNEMTN
+    // Round up for correct alignment
     reqSize = ALIGNMENT * ((size + ALIGNMENT - 1) / ALIGNMENT);
   }
-  // find free block
+
+  // Implement mm_malloc.  You can change or remove any of the above
+  // code.  It is included as a suggestion of where to start.
+  // You will want to replace this return statement...
+  
+  // search free list for first available spot
   ptrFreeBlock = searchFreeList(reqSize);
   if (ptrFreeBlock == NULL) { // if no free block, extend
     requestMoreSpace(reqSize);
@@ -427,33 +434,38 @@ void *mm_malloc(size_t size) {
 }
 
 /* Free the block referenced by ptr. */
-void mm_free(void *ptr) {
-  // Handle NULL pointer
-  if (ptr == NULL) {
+void mm_free (void *ptr) {
+  size_t payloadSize;
+  BlockInfo * blockInfo;
+  BlockInfo * followingBlock;
+
+  // Implement mm_free.  You can change or remove the declaraions
+  // above.  They are included as minor hints.
+  
+  // have pointer point to header of given ptr, casts void ptr to blockinfo ptr
+  blockInfo = (BlockInfo*) UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
+
+  // make sure block isn't already free
+  if (((blockInfo -> sizeAndTags) & TAG_USED) == 0) {
     return;
   }
 
-  // Get BlockInfo pointer from payload pointer
-  BlockInfo *blockInfo = (BlockInfo *)((char *)ptr - WORD_SIZE);
-  size_t payloadSize = SIZE(blockInfo->sizeAndTags);
-  BlockInfo *followingBlock = (BlockInfo *)((char *)blockInfo + payloadSize);
+  // get size of block being freed
+  payloadSize = SIZE(blockInfo -> sizeAndTags);
 
-  // Mark block as free
-  blockInfo->sizeAndTags &= ~TAG_USED;
 
-// Mark the following block's prev allocated bit
-// Assuming TAG_PREV_ALLOCATED is defined as 2
-#ifndef TAG_PREV_ALLOCATED
-#define TAG_PREV_ALLOCATED 2
-#endif
+  // set current block's use tag to 0
+  blockInfo -> sizeAndTags = (blockInfo -> sizeAndTags) & (~TAG_USED);
+  // update block's footer tag to be same as header
+  *((size_t*) UNSCALED_POINTER_ADD(blockInfo, (payloadSize - WORD_SIZE))) = blockInfo -> sizeAndTags;
 
-  followingBlock->sizeAndTags &= ~TAG_PREV_ALLOCATED;
+  // get following block and and set its preceding use tag to 0
+  followingBlock = (BlockInfo*) UNSCALED_POINTER_ADD(blockInfo, payloadSize);
+  followingBlock -> sizeAndTags = followingBlock -> sizeAndTags & (~TAG_PRECEDING_USED);
 
-  // Coalesce with adjacent free blocks
-  coalesceFreeBlock(blockInfo);
-
-  // Insert the (possibly coalesced) block into free list
+  // put block to be freed in free list, then coalesce with surrounding blocks
   insertFreeBlock(blockInfo);
+  coalesceFreeBlock(blockInfo);
 }
 
 // Implement a heap consistency checker as needed.
