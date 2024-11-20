@@ -353,15 +353,17 @@ int mm_init() {
 // TOP-LEVEL ALLOCATOR INTERFACE ------------------------------------
 
 /* Allocate a block of size size and return a pointer to it. */
-void *mm_malloc(size_t size) {
+void* mm_malloc (size_t size) {
   size_t reqSize;
-  BlockInfo *ptrFreeBlock = NULL;
+  BlockInfo * ptrFreeBlock = NULL;
   size_t blockSize;
   size_t precedingBlockUseTag;
+
   // Zero-size requests get NULL.
   if (size == 0) {
     return NULL;
   }
+
   // Add one word for the initial size header.
   // Note that we don't need to boundary tag when the block is used!
   size += WORD_SIZE;
@@ -371,29 +373,14 @@ void *mm_malloc(size_t size) {
     // next pointer, the prev pointer, and the boundary tag).
     reqSize = MIN_BLOCK_SIZE;
   } else {
-    // Round up for correct alignment in multiples of ALIGNEMTN
+    // Round up for correct alignment
     reqSize = ALIGNMENT * ((size + ALIGNMENT - 1) / ALIGNMENT);
   }
-  // find free block
-  ptrFreeBlock = searchFreeList(reqSize);
-  if (ptrFreeBlock == NULL) { // if no free block, extend
-    requestMoreSpace(reqSize);
-    ptrFreeBlock = searchFreeList(reqSize); // reasign
-    if (ptrFreeBlock == NULL) {
-      return NULL; // if still not right size, give up
-    }
-  }
-  // check if block is too big
-  if (SIZE(ptrFreeBlock->sizeAndTags) > (reqSize + MIN_BLOCK_SIZE)) {
-    mm_realloc(ptrFreeBlock, reqSize);
-  }
 
-  removeFreeBlock(ptrFreeBlock);
-  // set block information as allocated
-  ptrFreeBlock->sizeAndTags |= TAG_USED;
-
-  return (void *)((char *)ptrFreeBlock +
-                  WORD_SIZE); // return pointer to block excluding header
+  // Implement mm_malloc.  You can change or remove any of the above
+  // code.  It is included as a suggestion of where to start.
+  // You will want to replace this return statement...
+  return NULL; 
 }
 
 /* Free the block referenced by ptr. */
