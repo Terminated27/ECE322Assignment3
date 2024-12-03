@@ -1,3 +1,5 @@
+// Luke Rattanavijai & Aidan Chin
+// Attempted Realloc
 /*-------------------------------------------------------------------
  * Lab 5 Starter code:
  *        single doubly-linked free block list with LIFO policy
@@ -11,6 +13,7 @@
  *   in memory.
  *-------------------------------------------------------------------- */
 
+#include <alloca.h>
 #include <alloca.h>
 #include <assert.h>
 #include <stddef.h>
@@ -362,6 +365,7 @@ void* mm_malloc (size_t size) {
   size_t precedingBlockUseTag;
   BlockInfo *newFreeBlock;
   BlockInfo *followingBlock;
+
   // Zero-size requests get NULL.
   if (size == 0) {
     return NULL;
@@ -375,7 +379,7 @@ void* mm_malloc (size_t size) {
     // next pointer, the prev pointer, and the boundary tag).
     reqSize = MIN_BLOCK_SIZE;
   } else {
-    // Round up for correct alignment
+    // Round up for correct alignment in multiples of ALIGNEMTN
     reqSize = ALIGNMENT * ((size + ALIGNMENT - 1) / ALIGNMENT);
   }
 
@@ -427,6 +431,7 @@ void* mm_malloc (size_t size) {
     ptrFreeBlock->sizeAndTags = ptrFreeBlock->sizeAndTags | TAG_USED;
   }
 
+
   removeFreeBlock(ptrFreeBlock);
 
   return ((void *)UNSCALED_POINTER_ADD(
@@ -434,39 +439,41 @@ void* mm_malloc (size_t size) {
 }
 
 /* Free the block referenced by ptr. */
-void mm_free (void *ptr) {
-  size_t payloadSize;
-  BlockInfo * blockInfo;
-  BlockInfo * followingBlock;
+void mm_free(void *ptr) {
+    // Handle null pointer
+    if (!ptr) return;
 
-  // Implement mm_free.  You can change or remove the declaraions
-  // above.  They are included as minor hints.
-  
-  // have pointer point to header of given ptr, casts void ptr to blockinfo ptr
-  blockInfo = (BlockInfo*) UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
+    //Get block header by subtracting WORD_SIZE from payload pointer
+    BlockInfo *block = (BlockInfo *)UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
 
-  // make sure block isn't already free
-  if (((blockInfo -> sizeAndTags) & TAG_USED) == 0) {
-    return;
-  }
+    // Check if block is already free
+    if (!(block->sizeAndTags & TAG_USED)) {
+        return;
+    }
 
-  // get size of block being freed
-  payloadSize = SIZE(blockInfo -> sizeAndTags);
+    //Get payload size using SIZE macro
+    size_t payload = SIZE(block->sizeAndTags);
 
+    //Mark block as unallocated in header
+    block->sizeAndTags &= ~TAG_USED;
 
-  // set current block's use tag to 0
-  blockInfo -> sizeAndTags = (blockInfo -> sizeAndTags) & (~TAG_USED);
-  // update block's footer tag to be same as header
-  *((size_t*) UNSCALED_POINTER_ADD(blockInfo, (payloadSize - WORD_SIZE))) = blockInfo -> sizeAndTags;
+    // Add footer tag at end of block
+    size_t *footer = (size_t *)UNSCALED_POINTER_ADD(block, payload - WORD_SIZE);
+    *footer = block->sizeAndTags;
 
-  // get following block and and set its preceding use tag to 0
-  followingBlock = (BlockInfo*) UNSCALED_POINTER_ADD(blockInfo, payloadSize);
-  followingBlock -> sizeAndTags = followingBlock -> sizeAndTags & (~TAG_PRECEDING_USED);
+    //Update next block's preceding used tag
+    BlockInfo *nextBlock = (BlockInfo *)UNSCALED_POINTER_ADD(block, payload);
+    if ((void *)nextBlock <= mem_heap_hi()) {
+        nextBlock->sizeAndTags &= ~TAG_PRECEDING_USED;
+    }
 
-  // put block to be freed in free list, then coalesce with surrounding blocks
-  insertFreeBlock(blockInfo);
-  coalesceFreeBlock(blockInfo);
+    //Insert block into free list
+    insertFreeBlock(block);
+
+    //Coalesce with adjacent free blocks
+    coalesceFreeBlock(block);
 }
+
 
 // Implement a heap consistency checker as needed.
 int mm_check() { return 0; }
