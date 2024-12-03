@@ -1,6 +1,5 @@
-
-// Aidan Chin and Luke Rattanavijai, we attempted the extra credit
-
+// Luke Rattanavijai & Aidan Chin
+// Attempted Realloc
 /*-------------------------------------------------------------------
  * Lab 5 Starter code:
  *        single doubly-linked free block list with LIFO policy
@@ -14,6 +13,7 @@
  *   in memory.
  *-------------------------------------------------------------------- */
 
+#include <alloca.h>
 #include <alloca.h>
 #include <assert.h>
 #include <stddef.h>
@@ -355,14 +355,17 @@ int mm_init() {
 
 // TOP-LEVEL ALLOCATOR INTERFACE ------------------------------------
 
-/* Allocate a block of size size and return a pointer to it. */
-void *mm_malloc(size_t size) {
+/* Allocate a block of size size and return a pointer to it. If size is zero,
+ * returns null.
+ */
+void* mm_malloc (size_t size) {
   size_t reqSize;
-  BlockInfo *ptrFreeBlock = NULL;
+  BlockInfo * ptrFreeBlock = NULL;
   size_t blockSize;
   size_t precedingBlockUseTag;
   BlockInfo *newFreeBlock;
   BlockInfo *followingBlock;
+
   // Zero-size requests get NULL.
   if (size == 0) {
     return NULL;
@@ -379,7 +382,12 @@ void *mm_malloc(size_t size) {
     // Round up for correct alignment in multiples of ALIGNEMTN
     reqSize = ALIGNMENT * ((size + ALIGNMENT - 1) / ALIGNMENT);
   }
-  // find free block
+
+  // Implement mm_malloc.  You can change or remove any of the above
+  // code.  It is included as a suggestion of where to start.
+  // You will want to replace this return statement...
+  
+  // search free list for first available spot
   ptrFreeBlock = searchFreeList(reqSize);
   if (ptrFreeBlock == NULL) { // if no free block, extend
     requestMoreSpace(reqSize);
@@ -423,6 +431,7 @@ void *mm_malloc(size_t size) {
     ptrFreeBlock->sizeAndTags = ptrFreeBlock->sizeAndTags | TAG_USED;
   }
 
+
   removeFreeBlock(ptrFreeBlock);
 
   return ((void *)UNSCALED_POINTER_ADD(
@@ -431,33 +440,40 @@ void *mm_malloc(size_t size) {
 
 /* Free the block referenced by ptr. */
 void mm_free(void *ptr) {
-  // Handle NULL pointer
-  if (ptr == NULL) {
-    return;
-  }
+    // Handle null pointer
+    if (!ptr) return;
 
-  // Get BlockInfo pointer from payload pointer
-  BlockInfo *blockInfo = (BlockInfo *)((char *)ptr - WORD_SIZE);
-  size_t payloadSize = SIZE(blockInfo->sizeAndTags);
-  BlockInfo *followingBlock = (BlockInfo *)((char *)blockInfo + payloadSize);
+    //Get block header by subtracting WORD_SIZE from payload pointer
+    BlockInfo *block = (BlockInfo *)UNSCALED_POINTER_SUB(ptr, WORD_SIZE);
 
-  // Mark block as free
-  blockInfo->sizeAndTags &= ~TAG_USED;
+    // Check if block is already free
+    if (!(block->sizeAndTags & TAG_USED)) {
+        return;
+    }
 
-// Mark the following block's prev allocated bit
-// Assuming TAG_PREV_ALLOCATED is defined as 2
-#ifndef TAG_PREV_ALLOCATED
-#define TAG_PREV_ALLOCATED 2
-#endif
+    //Get payload size using SIZE macro
+    size_t payload = SIZE(block->sizeAndTags);
 
-  followingBlock->sizeAndTags &= ~TAG_PREV_ALLOCATED;
+    //Mark block as unallocated in header
+    block->sizeAndTags &= ~TAG_USED;
 
-  // Coalesce with adjacent free blocks
-  coalesceFreeBlock(blockInfo);
+    // Add footer tag at end of block
+    size_t *footer = (size_t *)UNSCALED_POINTER_ADD(block, payload - WORD_SIZE);
+    *footer = block->sizeAndTags;
 
-  // Insert the (possibly coalesced) block into free list
-  insertFreeBlock(blockInfo);
+    //Update next block's preceding used tag
+    BlockInfo *nextBlock = (BlockInfo *)UNSCALED_POINTER_ADD(block, payload);
+    if ((void *)nextBlock <= mem_heap_hi()) {
+        nextBlock->sizeAndTags &= ~TAG_PRECEDING_USED;
+    }
+
+    //Insert block into free list
+    insertFreeBlock(block);
+
+    //Coalesce with adjacent free blocks
+    coalesceFreeBlock(block);
 }
+
 
 // Implement a heap consistency checker as needed.
 int mm_check() { return 0; }
